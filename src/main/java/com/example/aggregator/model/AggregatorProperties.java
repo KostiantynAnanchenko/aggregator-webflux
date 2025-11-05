@@ -10,6 +10,12 @@ import java.util.List;
 @Configuration
 @ConfigurationProperties(prefix = "aggregator")
 public class AggregatorProperties {
+
+    /**
+     * Default cache TTL in minutes if not configured externally.
+     */
+    private long cacheTtlMinutes = 1L;
+
     private List<Source> sources;
 
     @Data

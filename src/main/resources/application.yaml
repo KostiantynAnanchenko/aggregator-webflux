@@ -12,6 +12,7 @@ server:
   port: 8080
 
 aggregator:
+  cache-ttl-minutes: 1
   sources:
     - name: weather
       url: https://api.open-meteo.com/v1/forecast?latitude=51.107883&longitude=17.038538&current_weather=true

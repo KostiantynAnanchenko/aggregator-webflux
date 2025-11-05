@@ -1,5 +1,6 @@
 package com.example.aggregator.service;
 
+import com.example.aggregator.exception.AggregationException;
 import com.example.aggregator.model.AggregatorProperties;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,8 +24,6 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class AggregatorService {
-
-    private static final Duration CACHE_TTL = Duration.ofMinutes(1);
     private static final String CACHE_KEY = "dashboard:cache";
 
     private final WebClient webClient;
@@ -51,7 +50,7 @@ public class AggregatorService {
         return fetchJson(source.getUrl())
                 .map(json -> Map.entry(source.getName(), json))
                 .onErrorResume(e -> {
-                    log.warn("Failed to fetch {}: {}", source.getName(), e.getMessage());
+                    log.info("Failed to fetch {}: {}", source.getName(), e.getMessage());
                     return Mono.empty();
                 });
     }
@@ -61,8 +60,10 @@ public class AggregatorService {
         map.forEach(root::set);
         String json = root.toString();
 
+        Duration ttl = Duration.ofMinutes(properties.getCacheTtlMinutes());
+
         return redis.opsForValue()
-                .set(CACHE_KEY, json, CACHE_TTL)
+                .set(CACHE_KEY, json, ttl)
                 .thenReturn(json)
                 .onErrorResume(e -> {
                     log.error("Redis unavailable, skipping cache: {}", e.getMessage());
@@ -87,7 +88,7 @@ public class AggregatorService {
         try {
             return objectMapper.readTree(body);
         } catch (Exception e) {
-            throw new RuntimeException("JSON parsing failed", e);
+            throw new AggregationException("JSON parsing failed", e);
         }
     }
 }
