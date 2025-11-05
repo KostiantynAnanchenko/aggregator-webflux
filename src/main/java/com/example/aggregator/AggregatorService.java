@@ -42,11 +42,17 @@ public class AggregatorService {
                 )
                 .collectMap(Map.Entry::getKey, Map.Entry::getValue)
                 .flatMap(map -> {
-                    ObjectNode root = objectMapper.valueToTree(map);
+                    ObjectNode root = objectMapper.createObjectNode();
+                    map.forEach(root::set);
                     String json = root.toString();
+
                     return redis.opsForValue()
                             .set(CACHE_KEY, json, CACHE_TTL)
-                            .thenReturn(json);
+                            .thenReturn(json)
+                            .onErrorResume(e -> {
+                                log.error("Redis unavailable, skipping cache: {}", e.getMessage());
+                                return Mono.just(json);
+                            });
                 })
                 .switchIfEmpty(
                         redis.opsForValue().get(CACHE_KEY)

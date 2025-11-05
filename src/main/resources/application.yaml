@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: aggregator-webflux
+  data:
+    redis:
+      host: redis-16093.c17.us-east-1-4.ec2.redns.redis-cloud.com
+      port: 16093
+      password: EfUQXQJ9If9QrgQ7NtzOfDbqoeRehinJ
+      timeout: 5000
+
+server:
+  port: 8080
+
+aggregator:
+  sources:
+    - name: weather
+      url: https://api.open-meteo.com/v1/forecast?latitude=51.107883&longitude=17.038538&current_weather=true
+    - name: fact
+      url: https://uselessfacts.jsph.pl/api/v2/facts/random
+    - name: ip
+      url: https://api.ipify.org/?format=json
