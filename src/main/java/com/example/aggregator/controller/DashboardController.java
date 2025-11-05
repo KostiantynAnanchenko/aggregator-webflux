@@ -1,6 +1,7 @@
-package com.example.aggregator;
+package com.example.aggregator.controller;
 
 
+import com.example.aggregator.service.AggregatorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;

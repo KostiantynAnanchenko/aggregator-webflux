@@ -1,4 +1,4 @@
-package com.example.aggregator;
+package com.example.aggregator.model;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
