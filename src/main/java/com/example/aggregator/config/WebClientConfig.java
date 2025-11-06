@@ -1,4 +1,4 @@
-package com.example.aggregator;
+package com.example.aggregator.config;
 
 
 import org.springframework.context.annotation.Bean;
